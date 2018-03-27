@@ -44,15 +44,18 @@ int main(int argc, char **argv)
     double t1, t2;
 
     if (!fp) { /* prompt, open, validate file for reading */
-        fprintf(stderr, "error: file open failed '%s'.\n", argv[1]);
+        fprintf(stderr, "   error: file open failed '%s'.\n", argv[1]);
         return 1;
     }
 
     t1 = tvgetf();
     while ((rtn = fscanf(fp, "%s", word)) != EOF) {
-        char *p = word;
+        //char *p = word;
+        char *p = (char *)malloc(sizeof(word));
+        strcpy(p, word);
+        printf("%p\n", p);
         /* FIXME: insert reference to each string */
-        if (!tst_ins_del(&root, &p, INS, CPY)) {
+        if (!tst_ins_del(&root, &p, INS, REF)) {
             fprintf(stderr, "error: memory exhausted, tst_insert.\n");
             fclose(fp);
             return 1;
