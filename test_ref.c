@@ -36,6 +36,12 @@ static void rmcrlf(char *s)
 
 int main(int argc, char **argv)
 {
+    // detect if there is "--bench" argument when run the program
+    int bench_flag = 0;
+    if (argc > 1) {
+        if (strcmp(argv[1], "--bench") == 0)
+            bench_flag = !bench_flag;
+    }
     char word[WRDMAX] = "";
     char *sgl[LMAX] = {NULL};
     tst_node *root = NULL, *res = NULL;
@@ -50,10 +56,8 @@ int main(int argc, char **argv)
 
     t1 = tvgetf();
     while ((rtn = fscanf(fp, "%s", word)) != EOF) {
-        //char *p = word;
         char *p = (char *)malloc(sizeof(word));
         strcpy(p, word);
-        printf("%p\n", p);
         /* FIXME: insert reference to each string */
         if (!tst_ins_del(&root, &p, INS, REF)) {
             fprintf(stderr, "error: memory exhausted, tst_insert.\n");
@@ -77,7 +81,11 @@ int main(int argc, char **argv)
             " d  delete word from the tree\n"
             " q  quit, freeing all data\n\n"
             "choice: ");
-        fgets(word, sizeof word, stdin);
+        //if bench_flag == 1 then the program get into "s" mode for searching in prefix
+        if (bench_flag)
+            strcpy(word, argv[2]);
+        else
+            fgets(word, sizeof word, stdin);
         p = NULL;
         switch (*word) {
         case 'a':
@@ -115,10 +123,15 @@ int main(int argc, char **argv)
                 printf("  %s not found.\n", word);
             break;
         case 's':
-            printf("find words matching prefix (at least 1 char): ");
-            if (!fgets(word, sizeof word, stdin)) {
-                fprintf(stderr, "error: insufficient input.\n");
-                break;
+            // if bench_flag == 1 then the program use the argv[3] as key word to search
+            if (bench_flag)
+                strcpy(word, argv[3]);
+            else {
+                printf("find words matching prefix (at least 1 char): ");
+                if (!fgets(word, sizeof word, stdin)) {
+                    fprintf(stderr, "error: insufficient input.\n");
+                    break;
+                }
             }
             rmcrlf(word);
             t1 = tvgetf();

@@ -3,6 +3,7 @@ TESTS = \
     test_ref
 
 CFLAGS = -Wall -Werror -g
+CH_FILE := test_ref.c test_cpy.c mpool.c mpool.h tst.c tst.h
 
 # Control the build verbosity                                                   
 ifeq ("$(VERBOSE)","1")
@@ -45,4 +46,18 @@ clean:
 	$(RM) $(TESTS) $(OBJS)
 	$(RM) $(deps)
 
+astyle:
+	astyle --style=kr --indent=spaces=4 --suffix=none $(CH_FILE) 
+
+TEST_DATA = s Tai 
+
+
+test: $(TESTS)    
+	echo 3 | sudo tee /proc/sys/vm/drop_caches;
+	perf stat --repeat 100 \ 
+		-e cache-misses,cache-references,instructions,cycles \
+        ./test_cpy --bench $(TEST_DATA)
+	perf stat --repeat 100 \ 
+		-e cache-misses,cache-references,instructions,cycles \
+        ./test_ref --bench $(TEST_DATA)
 -include $(deps)
