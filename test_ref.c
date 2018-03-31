@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 
     fclose(fp);
     printf("ternary_tree, loaded %d words in %.6f sec\n", idx, t2 - t1);
-
+    u_int8_t break_for_flag  = 0;
     for (;;) {
         char *p;
         printf(
@@ -143,6 +143,8 @@ int main(int argc, char **argv)
                     printf("suggest[%d] : %s\n", i, sgl[i]);
             } else
                 printf("  %s - not found\n", word);
+            if (bench_flag)
+                break_for_flag = !break_for_flag;
             break;
         case 'd':
             printf("enter word to del: ");
@@ -172,6 +174,10 @@ int main(int argc, char **argv)
             fprintf(stderr, "error: invalid selection.\n");
             break;
         }
+
+        if (break_for_flag)
+            break;
+
     }
 
     return 0;
