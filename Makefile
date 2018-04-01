@@ -1,9 +1,9 @@
 TESTS = \
     test_cpy \
-    test_ref
+    test_ref testMpool
 
 CFLAGS = -Wall -Werror -g
-CH_FILE := test_ref.c test_cpy.c mpool.c mpool.h tst.c tst.h
+CH_FILE := test_ref.c test_cpy.c testMpool.c mpool.c mpool.h tst.c tst.h
 
 # Control the build verbosity                                                   
 ifeq ("$(VERBOSE)","1")
@@ -30,13 +30,18 @@ OBJS_LIB = \
 OBJS := \
     $(OBJS_LIB) \
     test_cpy.o \
-    test_ref.o
+    test_ref.o testMpool.o
 
 deps := $(OBJS:%.o=.%.o.d)
 
 test_%: test_%.o $(OBJS_LIB)
 	$(VECHO) "  LD\t$@\n"
 	$(Q)$(CC) $(LDFLAGS) -o $@ $^
+
+testMpool: testMpool.o $(OBJS_LIB) mpool.o
+	$(VECHO) "  LD\t$@\n"
+	$(Q)$(CC) $(LDFLAGS) -o $@ $^
+
 
 %.o: %.c
 	$(VECHO) "  CC\t$@\n"
@@ -51,13 +56,22 @@ astyle:
 
 TEST_DATA = s Tai 
 
-
-test: $(TESTS)    
+cache-test_cpy: $(TESTS)    
 	echo 3 | sudo tee /proc/sys/vm/drop_caches;
-	perf stat --repeat 100 \ 
-		-e cache-misses,cache-references,instructions,cycles \
-        ./test_cpy --bench $(TEST_DATA)
-	perf stat --repeat 100 \ 
-		-e cache-misses,cache-references,instructions,cycles \
-        ./test_ref --bench $(TEST_DATA)
+	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./test_cpy --bench $(TEST_DATA)
+cache-test_ref: $(TESTS)    
+	echo 3 | sudo tee /proc/sys/vm/drop_caches;
+	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./test_ref --bench $(TEST_DATA)
+
+cache-test_mpool: $(TESTS)    
+	echo 3 | sudo tee /proc/sys/vm/drop_caches;
+	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./test_mpool --bench $(TEST_DATA)
+
+
+cache-test: $(TESTS)    
+	echo 3 | sudo tee /proc/sys/vm/drop_caches;
+	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./test_cpy --bench $(TEST_DATA)
+	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./test_ref --bench $(TEST_DATA)
+	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./test_mpool --bench $(TEST_DATA)
+
 -include $(deps)

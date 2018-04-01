@@ -4,11 +4,14 @@
 #include <time.h>
 
 #include "tst.h"
-
+#include "mpool.h"
 /** constants insert, delete, max word(s) & stack nodes */
 enum { INS, DEL, WRDMAX = 256, STKMAX = 512, LMAX = 1024 };
 #define REF INS
 #define CPY DEL
+
+//declare the memory pool for the elements
+static mPool *POOL = NULL;
 
 /* timing helper function */
 static double tvgetf(void)
@@ -42,6 +45,10 @@ int main(int argc, char **argv)
         if (strcmp(argv[1], "--bench") == 0)
             bench_flag = !bench_flag;
     }
+
+    // create the memory pool
+    POOL = mPool_allocate(sizeof(char) * 120000000);
+
     char word[WRDMAX] = "";
     char *sgl[LMAX] = {NULL};
     tst_node *root = NULL, *res = NULL;
@@ -50,14 +57,28 @@ int main(int argc, char **argv)
     double t1, t2;
 
     if (!fp) { /* prompt, open, validate file for reading */
-        fprintf(stderr, "error: file open failed '%s'.\n", argv[1]);
+        fprintf(stderr, "   error: file open failed '%s'.\n", argv[1]);
         return 1;
     }
 
     t1 = tvgetf();
+    int i = 0;
     while ((rtn = fscanf(fp, "%s", word)) != EOF) {
-        char *p = word;
-        if (!tst_ins_del(&root, &p, INS, CPY)) {
+        //char *p = (char *)malloc(sizeof(word));
+        // assing memory for the *p
+        printf("i = %d\n", i);
+
+        if (i == 12854 || i == 517)
+            printf("trouble\n");
+
+        i++;
+        char *p = (char *) pool_access(POOL, sizeof(char) * strlen(word));
+
+        printf("word = %s\n", word);
+        printf("*p = %s\n", p);
+        strcpy(p, word);
+        /* FIXME: insert reference to each string */
+        if (!tst_ins_del(&root, &p, INS, REF)) {
             fprintf(stderr, "error: memory exhausted, tst_insert.\n");
             fclose(fp);
             return 1;
@@ -68,7 +89,6 @@ int main(int argc, char **argv)
 
     fclose(fp);
     printf("ternary_tree, loaded %d words in %.6f sec\n", idx, t2 - t1);
-
     u_int8_t break_for_flag  = 0;
     for (;;) {
         char *p;
@@ -80,7 +100,6 @@ int main(int argc, char **argv)
             " d  delete word from the tree\n"
             " q  quit, freeing all data\n\n"
             "choice: ");
-
         //if bench_flag == 1 then the program get into "s" mode for searching in prefix
         if (bench_flag)
             strcpy(word, argv[2]);
@@ -92,11 +111,12 @@ int main(int argc, char **argv)
             printf("enter word to add: ");
             if (!fgets(word, sizeof word, stdin)) {
                 fprintf(stderr, "error: insufficient input.\n");
-                break;
             }
+            break;
             rmcrlf(word);
             p = word;
             t1 = tvgetf();
+            /* FIXME: insert reference to each string */
             res = tst_ins_del(&root, &p, INS, CPY);
             t2 = tvgetf();
             if (res) {
@@ -155,6 +175,7 @@ int main(int argc, char **argv)
             p = word;
             printf("  deleting %s\n", word);
             t1 = tvgetf();
+            /* FIXME: remove reference to each string */
             res = tst_ins_del(&root, &p, DEL, CPY);
             t2 = tvgetf();
             if (res)
@@ -172,9 +193,12 @@ int main(int argc, char **argv)
             fprintf(stderr, "error: invalid selection.\n");
             break;
         }
+
         if (break_for_flag)
             break;
+
     }
 
+    poolFree(POOL);
     return 0;
 }

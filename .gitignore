@@ -2,3 +2,7 @@
 *.o.d
 test_cpy
 test_ref
+*.swp
+*.swo
+*.data
+testMpool
