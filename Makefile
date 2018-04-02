@@ -65,13 +65,15 @@ cache-test_ref: $(TESTS)
 
 cache-test_mpool: $(TESTS)    
 	echo 3 | sudo tee /proc/sys/vm/drop_caches;
-	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./test_mpool --bench $(TEST_DATA)
+	sudo sh -c 'echo 1 >/proc/sys/kernel/perf_event_paranoid'
+	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./testMpool --bench $(TEST_DATA)
 
 
 cache-test: $(TESTS)    
 	echo 3 | sudo tee /proc/sys/vm/drop_caches;
+	sudo sh -c 'echo 1 >/proc/sys/kernel/perf_event_paranoid'
 	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./test_cpy --bench $(TEST_DATA)
 	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./test_ref --bench $(TEST_DATA)
-	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./test_mpool --bench $(TEST_DATA)
+	perf stat --repeat 100 -e cache-misses,cache-references,instructions,cycles ./testMpool --bench $(TEST_DATA)
 
 -include $(deps)

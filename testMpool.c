@@ -62,20 +62,11 @@ int main(int argc, char **argv)
     }
 
     t1 = tvgetf();
-    int i = 0;
     while ((rtn = fscanf(fp, "%s", word)) != EOF) {
         //char *p = (char *)malloc(sizeof(word));
         // assing memory for the *p
-        printf("i = %d\n", i);
-
-        if (i == 12854 || i == 517)
-            printf("trouble\n");
-
-        i++;
         char *p = (char *) pool_access(POOL, sizeof(char) * strlen(word));
 
-        printf("word = %s\n", word);
-        printf("*p = %s\n", p);
         strcpy(p, word);
         /* FIXME: insert reference to each string */
         if (!tst_ins_del(&root, &p, INS, REF)) {
