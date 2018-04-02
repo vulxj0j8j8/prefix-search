@@ -47,7 +47,7 @@ int main(int argc, char **argv)
     }
 
     // create the memory pool
-    POOL = mPool_allocate(sizeof(char) * 120000000);
+    POOL = mPool_allocate(sizeof(char) * 2179200);
 
     char word[WRDMAX] = "";
     char *sgl[LMAX] = {NULL};
@@ -61,11 +61,25 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    int i =0;
+
     t1 = tvgetf();
     while ((rtn = fscanf(fp, "%s", word)) != EOF) {
         //char *p = (char *)malloc(sizeof(word));
         // assing memory for the *p
-        char *p = (char *) pool_access(POOL, sizeof(char) * strlen(word));
+        printf("i == %d\n", i);
+        if (i == 11263)
+            printf("fault");
+        if (i == 100) {
+            mPool *pool = POOL->head;
+            for (int j = 0; j < 100; j++) {
+                printf("*p = %c\n", *(((char *)pool) + j));
+            }
+            printf("end\n");
+        }
+        char *p = (char *) pool_access(POOL, sizeof(char) * (strlen(word) + 1));
+
+
 
         strcpy(p, word);
         /* FIXME: insert reference to each string */
@@ -75,6 +89,8 @@ int main(int argc, char **argv)
             return 1;
         }
         idx++;
+
+        i++;
     }
     t2 = tvgetf();
 

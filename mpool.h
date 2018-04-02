@@ -10,7 +10,7 @@ typedef struct mPool {
     struct mPool *head;
     struct mPool *end;
     struct mPool *next;
-    struct mPool *nextPool;
+    //struct mPool *nextPool;
 } mPool;
 
 mPool *mPool_allocate(size_t size);
