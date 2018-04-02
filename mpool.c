@@ -26,7 +26,6 @@ void *pool_access(mPool *pool, size_t size)
     }
     void *thisPtr = pool->next;
     pool->next = pool->next + size;
-
     return thisPtr;
 }
 
