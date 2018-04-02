@@ -1,0 +1,9 @@
+# started on Mon Apr  2 21:08:31 2018
+
+
+ Performance counter stats for './testMpool --bench s Tai' (5 runs):
+
+          390,3437      cache-misses                                                  ( +-  1.57% )
+
+       0.156859128 seconds time elapsed                                          ( +-  7.14% )
+

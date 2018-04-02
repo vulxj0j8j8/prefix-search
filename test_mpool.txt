@@ -1,0 +1,12 @@
+# started on Mon Apr  2 21:19:49 2018
+
+
+ Performance counter stats for './testMpool --bench s Tai' (100 runs):
+
+          390,9126      cache-misses              #   50.138 % of all cache refs      ( +-  0.88% )
+          779,6692      cache-references                                              ( +-  0.63% )
+       4,4898,7083      instructions              #    1.03  insn per cycle           ( +-  0.01% )
+       4,3775,1971      cycles                                                        ( +-  0.61% )
+
+       0.142457519 seconds time elapsed                                          ( +-  0.64% )
+

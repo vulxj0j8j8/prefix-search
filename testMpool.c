@@ -67,20 +67,7 @@ int main(int argc, char **argv)
     while ((rtn = fscanf(fp, "%s", word)) != EOF) {
         //char *p = (char *)malloc(sizeof(word));
         // assing memory for the *p
-        printf("i == %d\n", i);
-        if (i == 11263)
-            printf("fault");
-        if (i == 100) {
-            mPool *pool = POOL->head;
-            for (int j = 0; j < 100; j++) {
-                printf("*p = %c\n", *(((char *)pool) + j));
-            }
-            printf("end\n");
-        }
         char *p = (char *) pool_access(POOL, sizeof(char) * (strlen(word) + 1));
-
-
-
         strcpy(p, word);
         /* FIXME: insert reference to each string */
         if (!tst_ins_del(&root, &p, INS, REF)) {

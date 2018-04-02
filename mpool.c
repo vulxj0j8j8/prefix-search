@@ -10,8 +10,8 @@ mPool *mPool_allocate(size_t size)
     //mPool *pool = (mPool *) calloc(size, sizeof(char));
     if (pool) {
         //pool->head = pool->next = pool + sizeof(mPool);
-        pool->head = pool->next = pool + 1;
-        pool->end = pool + size + sizeof(mPool);
+        pool->head = pool->next = (char *)((mPool *)pool + 1);
+        pool->end = (char *)((mPool *)pool + size + sizeof(mPool));
     }
 
     return pool;
@@ -25,7 +25,7 @@ void *pool_access(mPool *pool, size_t size)
         return NULL;
     }
     void *thisPtr = pool->next;
-    pool->next = (mPool *)((char *)pool->next + size);
+    pool->next = pool->next + size;
 
     return thisPtr;
 }

@@ -7,9 +7,9 @@
 
 
 typedef struct mPool {
-    struct mPool *head;
-    struct mPool *end;
-    struct mPool *next;
+    char *head;
+    char *end;
+    char *next;
     //struct mPool *nextPool;
 } mPool;
 

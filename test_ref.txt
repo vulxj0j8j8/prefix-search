@@ -1,0 +1,12 @@
+# started on Mon Apr  2 21:19:28 2018
+
+
+ Performance counter stats for './test_ref --bench s Tai' (100 runs):
+
+          720,0021      cache-misses              #   57.938 % of all cache refs      ( +-  0.98% )
+         1242,7038      cache-references                                              ( +-  1.42% )
+       5,2832,8509      instructions              #    0.84  insn per cycle           ( +-  0.01% )
+       6,2778,1210      cycles                                                        ( +-  1.02% )
+
+       0.204461808 seconds time elapsed                                          ( +-  1.04% )
+
